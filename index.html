@@ -1,8 +1,23 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f5f5f7"><meta name="description" content="MindTrack is a private, read-only Nike Mind 001 order tracker."><title>MindTrack — Order Tracker</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet"><style>
 :root{--bg:#f5f5f7;--card:#fff;--ink:#17181c;--muted:#777b84;--line:#e5e6e9;--blue:#1769e0;--green:#178653;--amber:#9a6500}*{box-sizing:border-box}body{margin:0;background:var(--bg);font:14px 'DM Sans',system-ui;color:var(--ink)}main{max-width:1050px;margin:auto;padding:26px 18px 50px}.top,.welcome,.row,.between{display:flex;align-items:center;justify-content:space-between;gap:14px}.top{margin-bottom:34px}.brand{display:flex;align-items:center;gap:10px}.mark{background:#15161a;color:white;border-radius:13px;width:42px;height:42px;display:grid;place-items:center;font:800 18px Manrope}.brandname{font:800 18px Manrope}.muted{color:var(--muted)}.tag{font-size:12px;margin-top:3px}.pill{border:1px solid var(--line);border-radius:99px;background:#fff;padding:8px 11px;font-size:11px;font-weight:700}.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#d99b18;margin-right:6px}.eyebrow{text-transform:uppercase;letter-spacing:1.6px;font-size:10px;font-weight:800;color:var(--muted);margin-bottom:8px}.welcome{align-items:end;margin-bottom:22px}.welcome h1{font:800 clamp(30px,5vw,42px)/1.1 Manrope;letter-spacing:-1.4px;margin:0}.welcome p{color:var(--muted);line-height:1.6;max-width:580px}.btn{border:0;background:#15161a;color:#fff;border-radius:12px;padding:11px 15px;font:700 12px 'DM Sans';cursor:pointer}.grid{display:grid;grid-template-columns:1.45fr 1fr;gap:16px}.stack{display:grid;gap:16px;align-content:start}.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 12px 34px #17181c08}.section{font:800 15px Manrope;margin:0}.status{font-size:11px;font-weight:700;background:#fff5df;color:var(--amber);padding:7px 10px;border-radius:99px}.product{display:flex;align-items:center;gap:18px;margin:23px 0}.shoe{width:112px;height:100px;border-radius:18px;background:linear-gradient(145deg,#f1f2f5,#dfe1e7);display:grid;place-items:center;font-size:42px;filter:grayscale(1)}h2{font:800 22px Manrope;letter-spacing:-.7px;margin:0 0 6px}.stats{display:flex;gap:24px;flex-wrap:wrap}.stats span{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px}.stats b{font-size:12px}.rule{height:1px;background:var(--line);margin:18px 0}.timeline{display:grid;gap:17px;margin-top:20px}.event{display:flex;gap:12px}.icon{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:#edf0f4;color:#9aa0aa;flex-shrink:0}.event.active .icon{background:#eaf2ff;color:var(--blue)}.event b{font-size:12px}.event p{font-size:11px;color:var(--muted);line-height:1.5;margin:4px 0 0}.prediction{background:#f7f8fa;border:1px solid #edf0f3;border-radius:16px;padding:15px;margin-top:15px}.prediction strong{font:800 18px Manrope}.prediction p,.callout{font-size:12px;color:var(--muted);line-height:1.6}.callout{background:#f8f9fb;border:1px solid #e9ebef;border-radius:15px;padding:13px;margin-top:16px}.safe{display:flex;justify-content:space-between;align-items:center;gap:16px}.switch{width:43px;height:26px;border:0;border-radius:99px;background:var(--green);position:relative;cursor:pointer;flex-shrink:0}.switch:after{content:'';position:absolute;width:20px;height:20px;right:3px;top:3px;border-radius:50%;background:white;box-shadow:0 1px 4px #0002}.switch.off{background:#c4c7ce}.switch.off:after{right:20px}.note{font-size:11px;color:var(--muted);line-height:1.55;margin-top:7px}.settings{display:none;margin-top:14px}.settings.show{display:block}.settings a{color:var(--blue)}footer{text-align:center;color:#969aa2;font-size:10px;line-height:1.7;margin-top:24px}#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#17181c;color:white;padding:12px 16px;border-radius:12px;font-size:12px;display:none;max-width:90vw}@media(max-width:760px){.grid{grid-template-columns:1fr}.welcome{align-items:flex-start;flex-direction:column}.top{margin-bottom:26px}.card{padding:19px}.product{align-items:flex-start}.shoe{width:88px;height:84px}.tag{display:none}}
-</style></head><body><main><header class="top"><div class="brand"><div class="mark">M.</div><div><div class="brandname">MindTrack</div><div class="tag muted">Your order, thoughtfully tracked.</div></div></div><div class="pill"><span class="dot"></span><span id="mode">Safe Mode on</span></div></header>
+</style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js"></script></head><body><main><header class="top"><div class="brand"><div class="mark">M.</div><div><div class="brandname">MindTrack</div><div class="tag muted">Your order, thoughtfully tracked.</div></div></div><div class="pill"><span class="dot"></span><span id="mode">Safe Mode on</span></div></header>
 <section class="welcome"><div><div class="eyebrow">Personal shipment dashboard</div><h1>Your order, at a glance.</h1><p>One calm place for verified updates about your Nike Mind 001. No guessed delivery dates, no order changes, and no payment details.</p></div><button class="btn" id="settingsBtn">Setup & settings</button></section>
+
+<article class="card" id="accountCard" style="margin-bottom:16px">
+  <div class="between"><h3 class="section">Private account connection</h3><span class="status" id="authBadge">Sign-in required</span></div>
+  <p class="note" style="margin:10px 0 14px">Sign in with the owner email, then connect Gmail using read-only permission. MindTrack never sends or deletes email.</p>
+  <div style="display:flex;gap:9px;flex-wrap:wrap">
+    <input id="ownerEmail" type="email" autocomplete="email" placeholder="Your owner email address" style="flex:1;min-width:220px;border:1px solid var(--line);border-radius:12px;padding:12px;font:inherit">
+    <button class="btn" id="signInBtn">Email me a sign-in link</button>
+  </div>
+  <p class="note" id="authMessage" role="status">Live connection is not activated until owner access and Google OAuth are configured.</p>
+  <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:12px">
+    <button class="btn" id="connectGmailBtn" disabled>Connect Gmail · read only</button>
+    <button class="btn" id="syncOrderBtn" disabled style="background:#e9edf4;color:#17181c">Sync order email</button>
+    <button class="btn" id="signOutBtn" disabled style="background:#e9edf4;color:#17181c">Sign out</button>
+  </div>
+</article>
 <div class="grid"><section class="stack"><article class="card"><div class="between"><div class="eyebrow">Order overview</div><span class="status">Awaiting live connection</span></div><div class="product"><div class="shoe">👟</div><div><h2>Nike Mind 001</h2><div class="muted">KICKS CREW · Personal order</div><p class="muted" style="font-size:12px;line-height:1.5">Your order details will appear here after you connect the private backend and sync your confirmation email.</p></div></div><div class="rule"></div><div class="stats"><div><span>Order status</span><b>Not synced yet</b></div><div><span>Tracking</span><b>Waiting for shipment</b></div><div><span>Delivery estimate</span><b>Not available yet</b></div></div><div class="callout">🔒 <b>Private by design.</b> This public webpage contains no order number, email content, tracking number, or account credentials. Live details require your own authenticated backend.</div></article>
 <article class="card"><div class="eyebrow">Shipment timeline</div><h3 class="section">Updates from the source</h3><div class="timeline"><div class="event active"><div class="icon">1</div><div><b>Connect your account</b><p>Sign in to your private MindTrack backend when setup is complete.</p></div></div><div class="event"><div class="icon">2</div><div><b>Sync order confirmation</b><p>MindTrack will search only matching KICKS CREW emails using Gmail read-only permission.</p></div></div><div class="event"><div class="icon">3</div><div><b>Track each package</b><p>Shipment cards and delivery estimates appear only when real tracking data is available.</p></div></div></div></article></section>
 <aside class="stack"><article class="card"><div class="eyebrow">Delivery outlook</div><h3 class="section">No ETA yet</h3><div class="prediction"><strong>Waiting for verified data</strong><p>MindTrack will not invent an arrival date. An estimate appears only when supported by a carrier or order update.</p></div><div class="rule"></div><div class="between"><span class="muted">Carrier scans</span><b>Not connected</b></div><div class="rule"></div><div class="between"><span class="muted">Last sync</span><b>Not synced</b></div></article>
@@ -10,4 +25,75 @@
 <article class="card"><div class="section">What MindTrack will never do</div><p class="note">• Collect payment or card information<br>• Cancel, return, edit, or manage an order<br>• Send, delete, or change your email<br>• Guess an ETA when reliable data is missing</p></article></aside></div>
 <footer>MindTrack is an independent personal project and is not affiliated with Nike or KICKS CREW.<br>Live integrations are not configured yet. This dashboard currently runs in safe preview mode.</footer></main><div id="toast"></div><script>
 const safeSwitch=document.getElementById('safeSwitch'),mode=document.getElementById('mode'),settings=document.getElementById('settings'),toast=document.getElementById('toast');let safe=true;document.getElementById('settingsBtn').onclick=()=>settings.classList.toggle('show');safeSwitch.onclick=()=>{if(safe){toast.textContent='Safe Mode cannot be disabled until the private backend is configured.';toast.style.display='block';setTimeout(()=>toast.style.display='none',3200);return}safe=true;mode.textContent='Safe Mode on';safeSwitch.classList.remove('off')};
+
+const authMessage=document.getElementById('authMessage');
+const authBadge=document.getElementById('authBadge');
+const signInBtn=document.getElementById('signInBtn');
+const connectGmailBtn=document.getElementById('connectGmailBtn');
+const syncOrderBtn=document.getElementById('syncOrderBtn');
+const signOutBtn=document.getElementById('signOutBtn');
+let mtClient=null;
+try {
+  const cfg=window.MINDTRACK_CONFIG||{};
+  if(window.supabase?.createClient && cfg.SUPABASE_URL && cfg.SUPABASE_ANON_KEY) {
+    mtClient=window.supabase.createClient(cfg.SUPABASE_URL,cfg.SUPABASE_ANON_KEY);
+    mtClient.auth.onAuthStateChange((_event,session)=>renderAuth(session));
+    mtClient.auth.getSession().then(({data})=>renderAuth(data.session));
+  } else {
+    authMessage.textContent='Supabase public configuration could not load. Refresh the page and try again.';
+    signInBtn.disabled=true;
+  }
+} catch(e) { authMessage.textContent='Sign-in setup could not start. Please refresh and try again.'; }
+function renderAuth(session) {
+  const loggedIn=!!session?.access_token;
+  authBadge.textContent=loggedIn?'Signed in':'Sign-in required';
+  connectGmailBtn.disabled=!loggedIn;
+  syncOrderBtn.disabled=!loggedIn;
+  signOutBtn.disabled=!loggedIn;
+  if(loggedIn) {
+    authMessage.textContent='Signed in. Connect Gmail when your owner access and Google OAuth credentials are configured.';
+    document.getElementById('ownerEmail').value=session.user?.email||document.getElementById('ownerEmail').value;
+  }
+}
+signInBtn.onclick=async()=>{
+  const email=document.getElementById('ownerEmail').value.trim();
+  if(!mtClient){authMessage.textContent='Supabase is not configured yet.';return;}
+  if(!email){authMessage.textContent='Enter the full owner email address first.';return;}
+  signInBtn.disabled=true;
+  try {
+    const {error}=await mtClient.auth.signInWithOtp({email,options:{emailRedirectTo:window.location.origin+window.location.pathname}});
+    authMessage.textContent=error?'Sign-in link could not be sent: '+error.message:'Check your inbox for the MindTrack sign-in link, then return to this page.';
+  } catch(e){authMessage.textContent='Sign-in could not be started. Please try again.';}
+  finally{signInBtn.disabled=false;}
+};
+connectGmailBtn.onclick=async()=>{
+  const {data}=await mtClient.auth.getSession();
+  if(!data.session){authMessage.textContent='Please sign in first.';return;}
+  connectGmailBtn.disabled=true;
+  try {
+    const cfg=window.MINDTRACK_CONFIG;
+    const response=await fetch(cfg.SUPABASE_URL+'/functions/v1/gmail-oauth-start',{method:'POST',headers:{'Content-Type':'application/json','apikey':cfg.SUPABASE_ANON_KEY,'Authorization':'Bearer '+data.session.access_token},body:'{}'});
+    const payload=await response.json();
+    if(!response.ok||!payload.url)throw new Error(payload.error||'Google OAuth is not configured yet.');
+    window.location.assign(payload.url);
+  } catch(e){authMessage.textContent=e.message||'Gmail connection failed.';connectGmailBtn.disabled=false;}
+};
+syncOrderBtn.onclick=async()=>{
+  const {data}=await mtClient.auth.getSession();
+  if(!data.session){authMessage.textContent='Please sign in first.';return;}
+  syncOrderBtn.disabled=true;authMessage.textContent='Checking for matching KICKS CREW order email…';
+  try {
+    const cfg=window.MINDTRACK_CONFIG;
+    const response=await fetch(cfg.SUPABASE_URL+'/functions/v1/gmail-sync',{method:'POST',headers:{'Content-Type':'application/json','apikey':cfg.SUPABASE_ANON_KEY,'Authorization':'Bearer '+data.session.access_token},body:JSON.stringify({automatic:false})});
+    const payload=await response.json();
+    if(!response.ok)throw new Error(payload.error||'Order sync failed.');
+    authMessage.textContent='Sync finished. '+(payload.message||'Refresh the page to review the latest status.');
+  } catch(e){authMessage.textContent=e.message||'Order sync failed.';}
+  finally{syncOrderBtn.disabled=false;}
+};
+signOutBtn.onclick=async()=>{if(mtClient){await mtClient.auth.signOut();authMessage.textContent='You have signed out.';}};
+const queryParams=new URLSearchParams(window.location.search);
+if(queryParams.get('gmail')==='connected') authMessage.textContent='Google authorized successfully. You can now sync your order email.';
+else if(queryParams.get('gmail')==='error') authMessage.textContent='Google connection did not finish: '+(queryParams.get('reason')||'please retry after setup is complete.');
+
 </script></body></html>
