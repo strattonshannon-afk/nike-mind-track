@@ -1,0 +1,14 @@
+[functions.gmail-oauth-callback]
+verify_jwt = false
+
+[functions.gmail-oauth-start]
+verify_jwt = true
+
+[functions.gmail-sync]
+verify_jwt = true
+
+[functions.carrier-track]
+verify_jwt = true
+
+[functions.ai-summary]
+verify_jwt = true
