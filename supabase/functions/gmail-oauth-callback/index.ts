@@ -18,6 +18,11 @@ Deno.serve(async (req) => {
     if (!token.refresh_token) return fail("Google did not return a refresh token. Revoke the old grant and reconnect.");
     const profileRes = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", { headers: { Authorization: `Bearer ${token.access_token}` } });
     const profile = profileRes.ok ? await profileRes.json() : {};
+    const allowedOwner = (Deno.env.get("ALLOWED_OWNER_EMAIL") || "").trim().toLowerCase();
+    const googleEmail = String(profile.email || "").trim().toLowerCase();
+    if (!allowedOwner || !googleEmail || googleEmail !== allowedOwner || profile.verified_email !== true) {
+      return fail("The connected Google account must be the verified MindTrack owner account.");
+    }
     const encrypted = await encryptToken(token.refresh_token);
     const { error } = await db.from("gmail_connections").upsert({ user_id: saved.user_id, google_email: profile.email || null, encrypted_refresh_token: encrypted, scopes: ["https://www.googleapis.com/auth/gmail.readonly"], updated_at: new Date().toISOString() }, { onConflict: "user_id" });
     if (error) throw error;
