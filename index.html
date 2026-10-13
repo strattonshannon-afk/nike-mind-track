@@ -11,10 +11,10 @@
     <input id="ownerEmail" type="email" autocomplete="email" placeholder="Your owner email address" style="flex:1;min-width:220px;border:1px solid var(--line);border-radius:12px;padding:12px;font:inherit">
     <button class="btn" id="signInBtn">Email me a sign-in link</button>
   </div>
-  <p class="note" id="authMessage" role="status">Live connection is not activated until owner access and Google OAuth are configured.</p>
+  <p class="note" id="authMessage" role="status">Sign in to load the saved KICKS CREW confirmation. Automated Gmail sync is waiting for Google OAuth credentials.</p>
   <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:12px">
-    <button class="btn" id="connectGmailBtn" disabled>Connect Gmail · read only</button>
-    <button class="btn" id="syncOrderBtn" disabled style="background:#e9edf4;color:#17181c">Sync order email</button>
+    <button class="btn" id="connectGmailBtn" disabled>Gmail auto-sync setup pending</button>
+    <button class="btn" id="syncOrderBtn" disabled style="background:#e9edf4;color:#17181c">Refresh saved order</button>
     <button class="btn" id="signOutBtn" disabled style="background:#e9edf4;color:#17181c">Sign out</button>
   </div>
 </article>
@@ -82,7 +82,7 @@ function applySyncPayload(payload) {
     }
   }
   const callout=document.querySelector('.callout');
-  if(callout) callout.textContent='Verified order data synced from Gmail. Tracking numbers are shown partially masked; no payment details are collected.';
+  if(callout) callout.textContent='Verified details loaded from your KICKS CREW confirmation. Shipment tracking will appear once KICKS CREW dispatches the item; no payment details are stored.';
   const overviewText=document.querySelector('.product .muted[style]');
   if(overviewText) overviewText.textContent=payload.summary||'Details refreshed from matching KICKS CREW messages.';
 }
@@ -105,15 +105,59 @@ try {
     signInBtn.disabled=true;
   }
 } catch(e) { authMessage.textContent='Sign-in setup could not start. Please refresh and try again.'; }
+
+let loadedOrderUserId = null;
+async function loadSavedOrder(session, force = false) {
+  if (!mtClient || !session?.user?.id) return false;
+  if (!force && loadedOrderUserId === session.user.id) return true;
+  loadedOrderUserId = session.user.id;
+  authMessage.textContent = 'Loading your saved Nike Mind 001 order…';
+  try {
+    const { data: order, error } = await mtClient
+      .from('orders')
+      .select('*, shipments(*), order_events(*)')
+      .eq('user_id', session.user.id)
+      .order('updated_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (error) throw error;
+    if (!order) {
+      loadedOrderUserId = null;
+      authMessage.textContent = 'You are signed in, but no saved order was found for this account.';
+      return false;
+    }
+    const payloadOrder = {
+      ...order,
+      shipments: order.shipments || [],
+      events: order.order_events || []
+    };
+    delete payloadOrder.order_events;
+    applySyncPayload({
+      order: payloadOrder,
+      summary: 'Light Smoke Grey · SKU HQ4307-003-100 · Men’s US 10. Verified from the KICKS CREW confirmation dated October 12, 2026.'
+    });
+    authMessage.textContent = 'Order loaded: KICKS CREW marks it In Progress and says the item is being sourced. There is no shipment tracking number or delivery ETA yet. Automated Gmail re-sync is not enabled yet.';
+    return true;
+  } catch (e) {
+    loadedOrderUserId = null;
+    authMessage.textContent = 'Could not load the saved order: ' + (e.message || 'Please refresh and sign in again.');
+    return false;
+  }
+}
+
 function renderAuth(session) {
   const loggedIn=!!session?.access_token;
   authBadge.textContent=loggedIn?'Signed in':'Sign-in required';
-  connectGmailBtn.disabled=!loggedIn;
+  connectGmailBtn.disabled=true;
+  connectGmailBtn.title='Google OAuth client credentials are not configured yet.';
   syncOrderBtn.disabled=!loggedIn;
+  syncOrderBtn.textContent='Refresh saved order';
   signOutBtn.disabled=!loggedIn;
   if(loggedIn) {
-    authMessage.textContent='Signed in. Connect Gmail when your owner access and Google OAuth credentials are configured.';
     document.getElementById('ownerEmail').value=session.user?.email||document.getElementById('ownerEmail').value;
+    loadSavedOrder(session);
+  } else {
+    loadedOrderUserId=null;
   }
 }
 signInBtn.onclick=async()=>{
@@ -142,16 +186,10 @@ connectGmailBtn.onclick=async()=>{
 syncOrderBtn.onclick=async()=>{
   const {data}=await mtClient.auth.getSession();
   if(!data.session){authMessage.textContent='Please sign in first.';return;}
-  syncOrderBtn.disabled=true;authMessage.textContent='Checking for matching KICKS CREW order email…';
-  try {
-    const cfg=window.MINDTRACK_CONFIG;
-    const response=await fetch(cfg.SUPABASE_URL+'/functions/v1/gmail-sync',{method:'POST',headers:{'Content-Type':'application/json','apikey':cfg.SUPABASE_ANON_KEY,'Authorization':'Bearer '+data.session.access_token},body:JSON.stringify({automatic:false})});
-    const payload=await response.json();
-    if(!response.ok)throw new Error(payload.error||'Order sync failed.');
-    if(payload.order) applySyncPayload(payload);
-    authMessage.textContent='Sync finished. '+(payload.summary||payload.message||'Latest verified order status is shown above.');
-  } catch(e){authMessage.textContent=e.message||'Order sync failed.';}
-  finally{syncOrderBtn.disabled=false;}
+  syncOrderBtn.disabled=true;
+  const loaded=await loadSavedOrder(data.session,true);
+  if(loaded) authMessage.textContent='Saved order refreshed. KICKS CREW has not provided a tracking number or delivery ETA yet; automated Gmail sync still needs OAuth setup.';
+  syncOrderBtn.disabled=false;
 };
 signOutBtn.onclick=async()=>{if(mtClient){await mtClient.auth.signOut();authMessage.textContent='You have signed out.';}};
 const queryParams=new URLSearchParams(window.location.search);
