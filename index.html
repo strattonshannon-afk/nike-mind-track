@@ -18,13 +18,74 @@
     <button class="btn" id="signOutBtn" disabled style="background:#e9edf4;color:#17181c">Sign out</button>
   </div>
 </article>
-<div class="grid"><section class="stack"><article class="card"><div class="between"><div class="eyebrow">Order overview</div><span class="status">Awaiting live connection</span></div><div class="product"><div class="shoe">👟</div><div><h2>Nike Mind 001</h2><div class="muted">KICKS CREW · Personal order</div><p class="muted" style="font-size:12px;line-height:1.5">Your order details will appear here after you connect the private backend and sync your confirmation email.</p></div></div><div class="rule"></div><div class="stats"><div><span>Order status</span><b>Not synced yet</b></div><div><span>Tracking</span><b>Waiting for shipment</b></div><div><span>Delivery estimate</span><b>Not available yet</b></div></div><div class="callout">🔒 <b>Private by design.</b> This public webpage contains no order number, email content, tracking number, or account credentials. Live details require your own authenticated backend.</div></article>
-<article class="card"><div class="eyebrow">Shipment timeline</div><h3 class="section">Updates from the source</h3><div class="timeline"><div class="event active"><div class="icon">1</div><div><b>Connect your account</b><p>Sign in to your private MindTrack backend when setup is complete.</p></div></div><div class="event"><div class="icon">2</div><div><b>Sync order confirmation</b><p>MindTrack will search only matching KICKS CREW emails using Gmail read-only permission.</p></div></div><div class="event"><div class="icon">3</div><div><b>Track each package</b><p>Shipment cards and delivery estimates appear only when real tracking data is available.</p></div></div></div></article></section>
-<aside class="stack"><article class="card"><div class="eyebrow">Delivery outlook</div><h3 class="section">No ETA yet</h3><div class="prediction"><strong>Waiting for verified data</strong><p>MindTrack will not invent an arrival date. An estimate appears only when supported by a carrier or order update.</p></div><div class="rule"></div><div class="between"><span class="muted">Carrier scans</span><b>Not connected</b></div><div class="rule"></div><div class="between"><span class="muted">Last sync</span><b>Not synced</b></div></article>
+<div class="grid"><section class="stack"><article class="card"><div class="between"><div class="eyebrow">Order overview</div><span class="status" id="orderStatusTag">Awaiting live connection</span></div><div class="product"><div class="shoe">👟</div><div><h2>Nike Mind 001</h2><div class="muted">KICKS CREW · Personal order</div><p class="muted" style="font-size:12px;line-height:1.5">Your order details will appear here after you connect the private backend and sync your confirmation email.</p></div></div><div class="rule"></div><div class="stats"><div><span>Order status</span><b id="orderStatusValue">Not synced yet</b></div><div><span>Tracking</span><b id="trackingValue">Waiting for shipment</b></div><div><span>Delivery estimate</span><b id="deliveryValue">Not available yet</b></div></div><div class="callout">🔒 <b>Private by design.</b> This public webpage contains no order number, email content, tracking number, or account credentials. Live details require your own authenticated backend.</div></article>
+<article class="card"><div class="eyebrow">Shipment timeline</div><h3 class="section">Updates from the source</h3><div class="timeline" id="shipmentTimeline"><div class="event active"><div class="icon">1</div><div><b>Connect your account</b><p>Sign in to your private MindTrack backend when setup is complete.</p></div></div><div class="event"><div class="icon">2</div><div><b>Sync order confirmation</b><p>MindTrack will search only matching KICKS CREW emails using Gmail read-only permission.</p></div></div><div class="event"><div class="icon">3</div><div><b>Track each package</b><p>Shipment cards and delivery estimates appear only when real tracking data is available.</p></div></div></div></article></section>
+<aside class="stack"><article class="card"><div class="eyebrow">Delivery outlook</div><h3 class="section" id="forecastHeading">No ETA yet</h3><div class="prediction"><strong id="forecastValue">Waiting for verified data</strong><p id="forecastNote">MindTrack will not invent an arrival date. An estimate appears only when supported by a carrier or order update.</p></div><div class="rule"></div><div class="between"><span class="muted">Carrier scans</span><b id="carrierScansValue">Not connected</b></div><div class="rule"></div><div class="between"><span class="muted">Last sync</span><b id="lastSyncValue">Not synced</b></div></article>
 <article class="card"><div class="safe"><div><div class="section">Safe Mode</div><div class="note">Keeps optional background polling off. Payment details and order-management actions are never part of MindTrack.</div></div><button class="switch" id="safeSwitch" aria-label="Safe Mode on" aria-pressed="true"></button></div><div class="settings" id="settings"><div class="rule"></div><div class="section">Finish setup</div><p class="note">The public dashboard is deployed separately from the secure backend. To activate live Gmail sync, configure Supabase and Google OAuth using the setup guide.</p><p><a href="SETUP.md">Open setup guide</a> · <a href="https://github.com/strattonshannon-afk/nike-mind-track">View source on GitHub</a></p><p class="note">Never add private keys, OAuth secrets, refresh tokens, or order details to this public repository.</p></div></article>
 <article class="card"><div class="section">What MindTrack will never do</div><p class="note">• Collect payment or card information<br>• Cancel, return, edit, or manage an order<br>• Send, delete, or change your email<br>• Guess an ETA when reliable data is missing</p></article></aside></div>
 <footer>MindTrack is an independent personal project and is not affiliated with Nike or KICKS CREW.<br>Live integrations are not configured yet. This dashboard currently runs in safe preview mode.</footer></main><div id="toast"></div><script>
 const safeSwitch=document.getElementById('safeSwitch'),mode=document.getElementById('mode'),settings=document.getElementById('settings'),toast=document.getElementById('toast');let safe=true;document.getElementById('settingsBtn').onclick=()=>settings.classList.toggle('show');safeSwitch.onclick=()=>{if(safe){toast.textContent='Safe Mode cannot be disabled until the private backend is configured.';toast.style.display='block';setTimeout(()=>toast.style.display='none',3200);return}safe=true;mode.textContent='Safe Mode on';safeSwitch.classList.remove('off')};
+
+
+function formatMoment(value) {
+  if(!value) return 'Not available';
+  const d=new Date(value);
+  return Number.isNaN(d.getTime())?'Not available':d.toLocaleString(undefined,{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+}
+function formatDay(value) {
+  if(!value) return 'Not available yet';
+  const d=new Date(String(value).slice(0,10)+'T12:00:00');
+  return Number.isNaN(d.getTime())?'Not available yet':d.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'});
+}
+function applySyncPayload(payload) {
+  const order=payload.order||{};
+  const shipments=Array.isArray(order.shipments)?order.shipments:[];
+  const events=Array.isArray(order.events)?order.events:[];
+  const normal=String(order.status||'unknown').replaceAll('_',' ');
+  const title=normal.replace(/\b\w/g,c=>c.toUpperCase());
+  const statusTag=document.getElementById('orderStatusTag');
+  if(statusTag) statusTag.textContent=title==='Unknown'?'Status needs review':title;
+  const statusValue=document.getElementById('orderStatusValue');
+  if(statusValue) statusValue.textContent=title==='Unknown'?'Unknown':title;
+  const trackingValue=document.getElementById('trackingValue');
+  const shipmentLabels=shipments.map(s=>{
+    const digits=String(s.tracking_number||'');
+    return (s.carrier||'Shipment')+(digits?' · …'+digits.slice(-4):'');
+  });
+  if(trackingValue) trackingValue.textContent=shipmentLabels.length?shipmentLabels.join(', '):'Waiting for shipment';
+  const eta=order.estimated_delivery||shipments.map(s=>s.estimated_delivery).filter(Boolean).sort()[0]||null;
+  const etaText=formatDay(eta);
+  const deliveryValue=document.getElementById('deliveryValue');
+  if(deliveryValue) deliveryValue.textContent=etaText;
+  const forecastHeading=document.getElementById('forecastHeading');
+  if(forecastHeading) forecastHeading.textContent=eta?'Estimated delivery':'No ETA yet';
+  const forecastValue=document.getElementById('forecastValue');
+  if(forecastValue) forecastValue.textContent=eta?etaText:'Waiting for verified data';
+  const forecastNote=document.getElementById('forecastNote');
+  if(forecastNote) forecastNote.textContent=eta?(order.prediction_confidence==='carrier'?'Estimate supplied by the carrier; it may change.':'Date reported in order information; verify with the carrier when tracking activates.'):'MindTrack will not invent an arrival date. A reliable estimate will appear when the carrier or order source provides one.';
+  const lastScan=order.last_carrier_scan||shipments.map(s=>s.last_scan_at).filter(Boolean).sort().slice(-1)[0]||null;
+  const carrierScansValue=document.getElementById('carrierScansValue');
+  if(carrierScansValue) carrierScansValue.textContent=lastScan?formatMoment(lastScan):'No scan yet';
+  const lastSyncValue=document.getElementById('lastSyncValue');
+  if(lastSyncValue) lastSyncValue.textContent=formatMoment(order.last_sync_at);
+  const timeline=document.getElementById('shipmentTimeline');
+  if(timeline) {
+    timeline.replaceChildren();
+    const rows=events.length?events.slice(0,25):[{title:'Order sync complete',description:'No additional matching updates were found.',occurred_at:order.last_sync_at}];
+    for(const event of rows) {
+      const item=document.createElement('div');item.className='event active';
+      const badge=document.createElement('div');badge.className='icon';badge.textContent='✓';
+      const body=document.createElement('div');
+      const titleEl=document.createElement('b');titleEl.textContent=String(event.title||'Order update');
+      const desc=document.createElement('p');desc.textContent=[event.description,formatMoment(event.occurred_at)].filter(Boolean).join(' · ');
+      body.append(titleEl,desc);item.append(badge,body);timeline.append(item);
+    }
+  }
+  const callout=document.querySelector('.callout');
+  if(callout) callout.textContent='Verified order data synced from Gmail. Tracking numbers are shown partially masked; no payment details are collected.';
+  const overviewText=document.querySelector('.product .muted[style]');
+  if(overviewText) overviewText.textContent=payload.summary||'Details refreshed from matching KICKS CREW messages.';
+}
 
 const authMessage=document.getElementById('authMessage');
 const authBadge=document.getElementById('authBadge');
@@ -87,7 +148,8 @@ syncOrderBtn.onclick=async()=>{
     const response=await fetch(cfg.SUPABASE_URL+'/functions/v1/gmail-sync',{method:'POST',headers:{'Content-Type':'application/json','apikey':cfg.SUPABASE_ANON_KEY,'Authorization':'Bearer '+data.session.access_token},body:JSON.stringify({automatic:false})});
     const payload=await response.json();
     if(!response.ok)throw new Error(payload.error||'Order sync failed.');
-    authMessage.textContent='Sync finished. '+(payload.message||'Refresh the page to review the latest status.');
+    if(payload.order) applySyncPayload(payload);
+    authMessage.textContent='Sync finished. '+(payload.summary||payload.message||'Latest verified order status is shown above.');
   } catch(e){authMessage.textContent=e.message||'Order sync failed.';}
   finally{syncOrderBtn.disabled=false;}
 };
