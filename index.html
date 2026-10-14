@@ -32,7 +32,7 @@
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js"></script></head><body><main><header class="top"><div class="brand"><div class="mark">M.</div><div><div class="brandname">MindTrack</div><div class="tag muted">Your order, with clear updates.</div></div></div><div class="pill"><span class="dot"></span><span id="mode">Safe Mode on</span></div></header>
 <section class="welcome"><div><div class="eyebrow">Personal shipment dashboard</div><h1>Your order, at a glance.</h1><p>Your order is saved. We’ll show what’s confirmed, clearly flag what’s missing, and never guess a delivery date.</p></div><button class="btn" id="settingsBtn">Setup & settings</button></section>
 
-<article class="card" id="accountCard" style="margin-bottom:16px">
+<article class="card" id="accountCard" style="display:none;margin-bottom:16px" aria-hidden="true">
   <div class="between"><h3 class="section">Private account connection</h3><span class="status" id="authBadge">Sign-in required</span></div>
   <p class="note" style="margin:10px 0 14px">Sign in with the owner email, then connect Gmail using read-only permission. MindTrack never sends or deletes email.</p>
   <div style="display:flex;gap:9px;flex-wrap:wrap">
@@ -46,7 +46,7 @@
     <button class="btn" id="signOutBtn" disabled style="background:#e9edf4;color:#17181c">Sign out</button>
   </div>
 </article>
-<div class="grid"><section class="stack"><article class="card"><div class="between"><div class="eyebrow">Order overview</div><span class="status" id="orderStatusTag">Awaiting live connection</span></div><div class="product"><div class="shoe">👟</div><div><h2>Nike Mind 001</h2><div class="muted">KICKS CREW · Personal order</div><p class="muted" style="font-size:12px;line-height:1.5">This is the information confirmed so far. New tracking details will appear when they are available and live updates are connected.</p></div></div><div class="rule"></div><div class="stats"><div><span>Order status</span><b id="orderStatusValue">Shipping email received</b></div><div><span>Tracking</span><b id="trackingValue">UPS tracking assigned</b></div><div><span>Delivery estimate</span><b id="deliveryValue">Not available yet</b></div></div><div class="callout">🔒 <b>Private by design.</b> This public webpage contains no order number, email content, tracking number, or account credentials. Live details require your own authenticated backend.</div></article>
+<div class="grid"><section class="stack"><article class="card"><div class="between"><div class="eyebrow">Order overview</div><span class="status" id="orderStatusTag">Shipping notice received</span></div><div class="product"><div class="shoe">👟</div><div><h2>Nike Mind 001</h2><div class="muted">KICKS CREW · Personal order</div><p class="muted" style="font-size:12px;line-height:1.5">KICKS CREW emailed that your Nike Mind 001 passed final verification and is on the way. UPS tracking has been issued; the first scan may take 24–48 hours to appear.</p></div></div><div class="rule"></div><div class="stats"><div><span>Order status</span><b id="orderStatusValue">Shipping notice received</b></div><div><span>Tracking</span><b id="trackingValue">UPS assigned · awaiting first scan</b></div><div><span>Delivery estimate</span><b id="deliveryValue">Not available yet</b></div></div><div class="callout">🔒 <b>Private by design.</b> This public webpage contains no order number, email content, tracking number, or account credentials. Live details require your own authenticated backend.</div></article>
 <article class="card"><div class="eyebrow">Shipment timeline</div><h3 class="section">What we know so far</h3><div class="timeline" id="shipmentTimeline"><div class="event active"><div class="icon">1</div><div><b>Connect your account</b><p>Sign in to your private MindTrack backend when setup is complete.</p></div></div><div class="event"><div class="icon">2</div><div><b>Sync order confirmation</b><p>MindTrack will search only matching KICKS CREW emails using Gmail read-only permission.</p></div></div><div class="event"><div class="icon">3</div><div><b>Track each package</b><p>Shipment cards and delivery estimates appear only when real tracking data is available.</p></div></div></div></article></section>
 <aside class="stack"><article class="card"><div class="eyebrow">Delivery outlook</div><h3 class="section" id="forecastHeading">No ETA yet</h3><div class="prediction"><strong id="forecastValue">Waiting for verified data</strong><p id="forecastNote">MindTrack will not invent an arrival date. An estimate appears only when supported by a carrier or order update.</p></div><div class="rule"></div><div class="between"><span class="muted">Carrier scans</span><b id="carrierScansValue">Not connected</b></div><div class="rule"></div><div class="between"><span class="muted">Last sync</span><b id="lastSyncValue">Not synced</b></div></article>
 <article class="card"><div class="safe"><div><div class="section">Safe Mode</div><div class="note">Keeps optional background polling off. Payment details and order-management actions are never part of MindTrack.</div></div><button class="switch" id="safeSwitch" aria-label="Safe Mode on" aria-pressed="true"></button></div><div class="settings" id="settings"><div class="rule"></div><div class="section">Finish setup</div><p class="note">The public dashboard is deployed separately from the secure backend. To activate live Gmail sync, configure Supabase and Google OAuth using the setup guide.</p><p><a href="SETUP.md">Open setup guide</a> · <a href="https://github.com/strattonshannon-afk/nike-mind-track">View source on GitHub</a></p><p class="note">Never add private keys, OAuth secrets, refresh tokens, or order details to this public repository.</p></div></article>
@@ -103,6 +103,7 @@ Order number: [add your order number here]
 Thank you!</textarea><div class="hq-actions"><button class="hq-primary" type="button" id="hqCopyDraftBtn">Copy message</button><button class="hq-secondary" type="button" id="hqResetDraftBtn">Reset draft</button></div><p class="hq-footnote">Tip: add your order number yourself before sending. Never paste payment-card details into a support message.</p>
 </section>
 <footer>MindTrack is an independent personal project and is not affiliated with Nike or KICKS CREW.<br>Order details are saved. Automatic Gmail and carrier updates are not connected yet, so newer updates may not appear automatically.</footer></main><div id="toast"></div><script>
+applyShippingNotice();
 const safeSwitch=document.getElementById('safeSwitch'),mode=document.getElementById('mode'),settings=document.getElementById('settings'),toast=document.getElementById('toast');let safe=true;document.getElementById('settingsBtn').onclick=()=>settings.classList.toggle('show');safeSwitch.onclick=()=>{if(safe){toast.textContent='Safe Mode cannot be disabled until the private backend is configured.';toast.style.display='block';setTimeout(()=>toast.style.display='none',3200);return}safe=true;mode.textContent='Safe Mode on';safeSwitch.classList.remove('off')};
 
 
@@ -161,10 +162,27 @@ function applySyncPayload(payload) {
     }
   }
   const callout=document.querySelector('.callout');
-  if(callout) callout.textContent='KICKS CREW says the item is being sourced. Tracking and a delivery estimate are not available yet. Automatic email refresh is not connected.';
+  if(callout) callout.textContent='Shipping email received: KICKS CREW says the item passed final verification and is on the way. UPS tracking is assigned, but the first carrier scan and delivery estimate are still pending. Automatic email sync is not connected.';
   const overviewText=document.querySelector('.product .muted[style]');
   if(overviewText) overviewText.textContent=payload.summary||'Details refreshed from matching KICKS CREW messages.';
+  applyShippingNotice();
 }
+function applyShippingNotice() {
+  const setText=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=value;};
+  setText('orderStatusTag','Shipping notice received');
+  setText('orderStatusValue','Shipping notice received');
+  setText('trackingValue','UPS assigned · awaiting first scan');
+  setText('deliveryValue','Not available yet');
+  setText('forecastHeading','No ETA yet');
+  setText('forecastValue','Waiting for first UPS scan');
+  setText('forecastNote','KICKS CREW says the item is on its way. UPS tracking can take 24–48 hours to activate; no delivery date is confirmed yet.');
+  setText('carrierScansValue','Waiting for first scan');
+  const callout=document.querySelector('.callout');
+  if(callout)callout.textContent='Shipping update confirmed from your KICKS CREW email: final verification passed and the item is on its way. UPS tracking has been issued; allow 24–48 hours for activation. No delivery estimate yet.';
+  const overviewText=document.querySelector('.product .muted[style]');
+  if(overviewText)overviewText.textContent='KICKS CREW shipping email received: final verification passed. UPS tracking is assigned; first scan and delivery estimate are pending.';
+}
+
 
 const authMessage=document.getElementById('authMessage');
 const authBadge=document.getElementById('authBadge');
@@ -215,7 +233,7 @@ async function loadSavedOrder(session, force = false) {
       order: payloadOrder,
       summary: 'Light Smoke Grey · SKU HQ4307-003-100 · Men’s US 10. Verified from the KICKS CREW confirmation dated October 12, 2026.'
     });
-    authMessage.textContent = 'Your order is saved, but information is limited. KICKS CREW says it is being sourced; no tracking number or delivery date is available yet. Automatic email updates are not connected.';
+    authMessage.textContent = 'Shipping email received: KICKS CREW says the item passed final verification and is on the way. UPS tracking has been issued; allow 24–48 hours for activation. Automatic email sync is not connected.';
     return true;
   } catch (e) {
     loadedOrderUserId = null;
@@ -267,7 +285,7 @@ syncOrderBtn.onclick=async()=>{
   if(!data.session){authMessage.textContent='Please sign in first.';return;}
   syncOrderBtn.disabled=true;
   const loaded=await loadSavedOrder(data.session,true);
-  if(loaded) authMessage.textContent='Saved order refreshed. KICKS CREW has not provided a tracking number or delivery ETA yet; automated Gmail sync still needs OAuth setup.';
+  if(loaded) authMessage.textContent='Saved order refreshed. Your latest known status remains the shipping notice; UPS tracking activation is pending and no ETA is confirmed.';
   syncOrderBtn.disabled=false;
 };
 signOutBtn.onclick=async()=>{if(mtClient){await mtClient.auth.signOut();authMessage.textContent='You have signed out.';}};
